@@ -1,28 +1,35 @@
-from picamera2 import Picamera2
-from datetime import datetime
+import os
 import time
-import RPi.GPIO as GPIO
 
-GPIO.setmode(GPIO.BCM)
+# import RPi.GPIO as GPIO
+# from picamera2 import Picamera2
 
+import helpers
+import env
+
+env.load_dotenv()
+
+print(os.getenv("CAPTURE_TYPE"))
+
+CWD = os.path.dirname(os.path.abspath(__file__))
+CAPTURES_DIRECTORY = CWD + "/captures"
 PIR_PIN = 17
 
-GPIO.setup(PIR_PIN, GPIO.IN)
+helpers.create_captures_dir(CAPTURES_DIRECTORY)
 
-camera = Picamera2()
-camera.start()
+# GPIO.setmode(GPIO.BCM)
+# GPIO.setup(PIR_PIN, GPIO.IN)
+# camera = Picamera2()
+# camera.start()
 
-print("Loading...")
+try:
+    while True:
+        # if GPIO.input(PIR_PIN):
+        #     helpers.print_with_date("Motion detected...")
+        #     time.sleep(2)
+        #     camera.capture_file("captures/" + helpers.build_capture_output_name())
 
-while True:
-	if GPIO.input(PIR_PIN):
-		print("Motion Detected")
-		timestamp = time.strftime("%Y-%m-%d-%H:%M:%S")
-		imageName = timestamp + "-motion-detection.jpg"
-		
-		time.sleep(2)
-		camera.capture_file("captures/" + imageName)
-	else:
-		print("No motion detected")
-	
-	time.sleep(1)
+        time.sleep(1)
+except KeyboardInterrupt:
+    helpers.print_with_date("exiting...")
+    # GPIO.cleanup()
